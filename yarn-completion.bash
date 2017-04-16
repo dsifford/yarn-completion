@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 #
-# Version: 0.1.0
+# Version: 0.1.1
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -144,7 +144,7 @@ _yarn_global() {
     case "$prev" in
         add|bin|remove|upgrade|upgrade_interactive)
             local global_completions_func=_yarn_${prev}
-	        declare -F "$global_completions_func" >/dev/null && $global_completions_func global
+            declare -F "$global_completions_func" >/dev/null && $global_completions_func global
             ;;
         ls|--depth)
             _yarn_list
@@ -504,30 +504,32 @@ _yarn() {
     )
 
     COMPREPLY=()
-    _init_completion || return
-	_get_comp_words_by_ref cur prev words cword
+    if declare -F _init_completions >/dev/null 2>&1; then
+        _init_completion
+    fi
+    _get_comp_words_by_ref cur prev words cword
 
     local command=yarn
     local counter=1
     while [ $counter -lt "$cword" ]; do
         case "${words[$counter]}" in
             -*)
-				;;
-			=)
-				(( counter++ ))
-				;;
-			*)
-				command="${words[$counter]}"
-				break
-				;;
+                ;;
+            =)
+                (( counter++ ))
+                ;;
+            *)
+                command="${words[$counter]}"
+                break
+                ;;
         esac
         (( counter++ ))
     done
 
     local completions_func=_yarn_${command}
-	declare -F "$completions_func" >/dev/null && $completions_func
+    declare -F "$completions_func" >/dev/null && $completions_func
 
-	return 0
+    return 0
 }
 
 complete -F _yarn yarn

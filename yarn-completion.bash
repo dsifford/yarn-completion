@@ -36,14 +36,12 @@ __yarn_get_package_fields() {
 
 # Returns the names of the globally installed packages.
 __yarn_get_globals() {
-    local packages
-    local bin_path
-    bin_path="$(yarn global bin)"
-    packages=$(
-        find "$bin_path" -type l -print0 |
-        xargs -0 basename
-    )
-    echo "$packages"
+    find "$(yarn global bin)" -type l -print0 | xargs -0 basename -a
+}
+
+__yarn_filedir() {
+    COMPREPLY=( $( compgen -f -- "$cur" ) )
+    compopt -o nospace
 }
 
 _yarn_add() {
@@ -224,7 +222,7 @@ _yarn_install() {
 
     case "$prev" in
         --modules-folder)
-            _filedir
+            __yarn_filedir
             return
             ;;
     esac
@@ -293,7 +291,7 @@ _yarn_pack() {
             return
             ;;
     esac
-    [[ "$prev" == --filename ]] && _filedir
+    [[ "$prev" == --filename ]] && __yarn_filedir
 }
 
 _yarn_publish() {
@@ -316,8 +314,8 @@ _yarn_publish() {
             return
             ;;
     esac
-
-    _filedir
+    
+    __yarn_filedir
 }
 
 _yarn_remove() {
@@ -403,8 +401,8 @@ _yarn_why() {
     modules_folder="$(pwd)/node_modules"
     [ ! -d "$modules_folder" ] || [[ "$prev" != why ]] && return
 
-    if [[ "$cur" == */ ]]; then
-        _filedir
+    if [[ "$cur" == ./* ]]; then
+        __yarn_filedir
     else
         modules=$(
             find node_modules/ -maxdepth 1 -type d | grep -Po 'node_modules/\K.+'

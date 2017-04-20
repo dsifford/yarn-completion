@@ -23,19 +23,15 @@ __yarn_get_package_fields() {
     local fields
     
     package="$(pwd)/package.json"
-    
     [ ! -e "$package" ] && return
 
     fields=$(
         sed -n "/\"$parentField\": {/,/\}/p" < "$package" |
-        head -n -1 |
         tail -n +2 |
-        sed -e 's/^[ \t]*//gm' |
-        grep -Po '"\K[^"]*(?=":)'
+        grep -Eo '"[[:alnum:]@/_-]+?"' |
+        grep -Eo '[[:alnum:]@/_-]+'
     )
-    fields=( $fields )
-
-    echo "${fields[*]}"
+    echo "$fields"
 }
 
 # Returns the names of the globally installed packages.
@@ -44,9 +40,8 @@ __yarn_get_globals() {
     local bin_path
     bin_path="$(yarn global bin)"
     packages=$(
-        find "$bin_path" -type l |
-        grep -Po "$bin_path/\K.+" |
-        sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'
+        find "$bin_path" -type l -print0 |
+        xargs -0 basename
     )
     echo "$packages"
 }
@@ -180,12 +175,18 @@ _yarn_info() {
         peerDependencies
         repository
         version
+        versions
     )
 
     [[ "$prev" == info ]] && return
 
-    local args
-    _count_args :
+    # `_count_args` backwards compatibility
+    local args=1
+    local counter=1
+    while [[ $counter -lt $cword ]]; do
+        [[ ${words[$counter]} != -* ]] && (( args++ ))
+        (( counter++ ))
+    done
 
     case "$cur" in
         -*)
@@ -413,8 +414,15 @@ _yarn_why() {
 }
 
 _yarn_yarn() {
-    local args
-    _count_args :
+    local args=1
+    local counter=1
+
+    # `_count_args` backwards compatibility
+    while [[ $counter -lt $cword ]]; do
+        [[ ${words[$counter]} != -* ]] && (( args++ ))
+        (( counter++ ))
+    done
+
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W "${global_flags[*]}" -- "$cur" ) )
@@ -511,7 +519,7 @@ _yarn() {
 
     local command=yarn
     local counter=1
-    while [ $counter -lt "$cword" ]; do
+    while [[ $counter -lt $cword ]]; do
         case "${words[$counter]}" in
             -*)
                 ;;

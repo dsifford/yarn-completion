@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 #
-# Version: 0.1.2
+# Version: 0.2.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -469,6 +469,7 @@ _yarn() {
         upgrade-interactive
         version
         why
+        $( __yarn_get_package_fields scripts )
     )
 
     local global_flags=(

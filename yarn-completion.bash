@@ -1,6 +1,7 @@
 # shellcheck shell=bash
 #
-# Version: 0.2.0
+# Version: 0.2.1
+# Yarn Version: 0.23.4
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -511,10 +512,10 @@ _yarn() {
     )
 
     COMPREPLY=()
-    if declare -F _init_completions >/dev/null 2>&1; then
+    if command -v _init_completion >/dev/null 2>&1; then
         _init_completion
+        _get_comp_words_by_ref cur prev words cword
     fi
-    _get_comp_words_by_ref cur prev words cword
 
     local command=yarn
     local counter=1

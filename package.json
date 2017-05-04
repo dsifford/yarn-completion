@@ -4,5 +4,8 @@
   "repository": "https://github.com/dsifford/yarn-completion.git",
   "description": "shell autocompletion for yarn",
   "author": "Derek P Sifford <dereksifford@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "symlink": "ln -sf \"$(pwd)/yarn-completion.bash\" ~/.dotfiles/shell/completions/yarn.sh"
+  }
 }

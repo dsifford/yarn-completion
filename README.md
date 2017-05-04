@@ -17,9 +17,12 @@ $ curl -o ~/.yarn-completion https://raw.githubusercontent.com/dsifford/yarn-com
 $ echo -e '\n. ~/.yarn-completion' >> ~/.bashrc
 ```
 
-**`zsh`**
+**`zsh`** (currently partially supported)
 ```sh
-$ echo -e '\nautoload -U bashcompinit && bashcompinit\n. ~/.yarn-completion' >> ~/.zshrc
+$ echo "
+autoload -U +X compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+. ~/.yarn-completion" >> ~/.zshrc
 ```
 
 ## License

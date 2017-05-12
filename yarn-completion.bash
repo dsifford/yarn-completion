@@ -29,8 +29,8 @@ __yarn_get_package_fields() {
     fields=$(
         sed -n "/\"$parentField\": {/,/\}/p" < "$package" |
         tail -n +2 |
-        grep -Eo '"[[:alnum:]@/_-]+?"' |
-        grep -Eo '[[:alnum:]@/_-]+'
+        grep -Eo '"[[:alnum:]@:./_-]+?"' |
+        grep -Eo '[[:alnum:]@:./_-]+'
     )
     echo "$fields"
 }

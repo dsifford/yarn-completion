@@ -141,6 +141,14 @@ _yarn_config() {
     esac
 }
 
+_yarn_create() {
+    local args  counter
+    __yarn_count_args
+    if [[ $args -eq 2 ]]; then
+        __yarn_filedir
+    fi
+}
+
 _yarn_global() {
     local subcommands=(
         add
@@ -455,6 +463,7 @@ _yarn() {
         check
         clean
         config
+        create
         generate-lock-entry
         global
         help

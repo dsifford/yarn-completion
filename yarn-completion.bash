@@ -50,6 +50,17 @@ __yarn_filedir() {
     compopt -o nospace
 }
 
+# `_count_args` backwards compatibility
+# Be sure to set `args` and `counter` locally before calling
+__yarn_count_args() {
+    args=0
+    counter=1
+    while [[ $counter -lt $cword ]]; do
+        [[ ${words[$counter]} != -* ]] && (( args++ ))
+        (( counter++ ))
+    done
+}
+
 _yarn_add() {
     local flags=(
         --dev
@@ -184,20 +195,15 @@ _yarn_info() {
 
     [[ "$prev" == info ]] && return
 
-    # `_count_args` backwards compatibility
-    local args=1
-    local counter=1
-    while [[ $counter -lt $cword ]]; do
-        [[ ${words[$counter]} != -* ]] && (( args++ ))
-        (( counter++ ))
-    done
+    local args counter
+    __yarn_count_args
 
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W "${flags[*]}" -- "$cur" ) )
             ;;
         *)
-            if [[ $args -eq 3 ]]; then
+            if [[ $args -eq 2 ]]; then
                 COMPREPLY=( $( compgen -W "${standard_fields[*]}" -- "$cur" ) )
             fi
             ;;
@@ -423,21 +429,15 @@ _yarn_why() {
 }
 
 _yarn_yarn() {
-    local args=1
-    local counter=1
-
-    # `_count_args` backwards compatibility
-    while [[ $counter -lt $cword ]]; do
-        [[ ${words[$counter]} != -* ]] && (( args++ ))
-        (( counter++ ))
-    done
+    local args counter
+    __yarn_count_args
 
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W "${global_flags[*]}" -- "$cur" ) )
             ;;
         *)
-            if [[ $args -eq 1 ]]; then
+            if [[ $args -eq 0 ]]; then
                 COMPREPLY=( $( compgen -W "${commands[*]}" -- "$cur" ) )
             fi
             ;;

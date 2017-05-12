@@ -40,8 +40,13 @@ __yarn_get_globals() {
     find "$(yarn global bin)" -type l -print0 | xargs -0 basename -a
 }
 
+# bash-completion _filedir backwards compatibility
 __yarn_filedir() {
-    COMPREPLY=( $( compgen -f -- "$cur" ) )
+    if [[ "$cur" == @* ]]; then
+        COMPREPLY=( $( compgen -f -- "./node_modules/$cur" | grep -Eo '@.+' ) )
+    else
+        COMPREPLY=( $( compgen -f -- "$cur" ) )
+    fi
     compopt -o nospace
 }
 
@@ -402,12 +407,17 @@ _yarn_why() {
     modules_folder="$(pwd)/node_modules"
     [ ! -d "$modules_folder" ] || [[ "$prev" != why ]] && return
 
-    if [[ "$cur" == ./* ]]; then
+    if [[ "$cur" == ./* || "$cur" == @*/ ]]; then
         __yarn_filedir
     else
         modules=$(
-            find node_modules/ -maxdepth 1 -type d | grep -Po 'node_modules/\K.+'
+            find node_modules/ -maxdepth 1 -type d | # first-level node_modules dirs
+            sed -e 's|node_modules/||'               # remove 'node_modules/' prefix
         )
+        if [[ "$cur" == @* ]]; then
+            modules=$(sed -e 's|$|/|' <<< "$modules") # append a trailing backslash
+            compopt -o nospace
+        fi
         COMPREPLY=( $( compgen -W "$modules" -- "$cur" ) )
     fi
 }

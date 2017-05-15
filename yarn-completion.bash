@@ -441,8 +441,6 @@ _yarn_yarn() {
     local args counter
     __yarn_count_args
 
-    _get_comp_words_by_ref cur prev words cword
-
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W "${global_flags[*]}" -- "$cur" ) )
@@ -534,6 +532,7 @@ _yarn() {
     )
 
     COMPREPLY=()
+    _get_comp_words_by_ref cur prev words cword
     if command -v _init_completion >/dev/null 2>&1; then
         _init_completion || return
     fi

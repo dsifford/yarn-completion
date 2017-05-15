@@ -18,11 +18,12 @@
 #
 # @param $1 parentField  The first-level property of interest.
 #
+
 __yarn_get_package_fields() {
     local parentField="$1"
     local package
     local fields
-    
+
     package="$(pwd)/package.json"
     [ ! -e "$package" ] && return
 
@@ -123,7 +124,7 @@ _yarn_config() {
         version-git-tag
         version-tag-prefix
     )
-    
+
     case "$prev" in
         get|delete)
             COMPREPLY=( $( compgen -W "${known_keys[*]}" -- "$cur" ) )
@@ -334,7 +335,7 @@ _yarn_publish() {
             return
             ;;
     esac
-    
+
     __yarn_filedir
 }
 
@@ -531,6 +532,7 @@ _yarn() {
     )
 
     COMPREPLY=()
+    _get_comp_words_by_ref cur prev words cword
     if command -v _init_completion >/dev/null 2>&1; then
         _init_completion || return
     fi

@@ -538,9 +538,10 @@ _yarn() {
     )
 
     COMPREPLY=()
-    _get_comp_words_by_ref cur prev words cword
-    if command -v _init_completion >/dev/null 2>&1; then
-        _init_completion || return
+    if command -v _init_completion >/dev/null; then
+        _init_completion
+    else
+        _get_comp_words_by_ref cur prev words cword 
     fi
 
     local command=yarn

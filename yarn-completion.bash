@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 #
-# Version: 0.3.1
-# Yarn Version: 0.24.4
+# Version: 0.3.2
+# Yarn Version: 0.25.2
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #

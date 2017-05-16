@@ -16,16 +16,27 @@
 # Returns the object keys for a given first-level property
 # in a package.json file located in the current directory if it exists.
 #
+# Optional flags:
+#   -g      query the package.json of the globals
+#
 # @param $1 parentField  The first-level property of interest.
 #
-
 __yarn_get_package_fields() {
-    local parentField="$1"
-    local package
-    local fields
-
+    local OPTIND opt fields package parentField
     package="$(pwd)/package.json"
-    [ ! -e "$package" ] && return
+
+    while getopts ":g" opt; do
+        case $opt in
+            g)
+                package="$HOME/.config/yarn/global/package.json"
+                ;;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+
+    parentField="$1"
+
+    [[ ! -e $package || ! $parentField ]] && return
 
     fields=$(
         sed -n "/\"$parentField\": {/,/\}/p" < "$package" |
@@ -34,11 +45,6 @@ __yarn_get_package_fields() {
         grep -Eo '[[:alnum:]@:./_-]+'
     )
     echo "$fields"
-}
-
-# Returns the names of the globally installed packages.
-__yarn_get_globals() {
-    find "$(yarn global bin)" -type l -print0 | xargs -0 basename -a
 }
 
 # bash-completion _filedir backwards compatibility
@@ -344,7 +350,7 @@ _yarn_remove() {
     local dependencies
     local devDependencies
     if [[ "$location" == 'global' ]]; then
-        dependencies=$(__yarn_get_globals)
+        dependencies=$(__yarn_get_package_fields -g dependencies)
         devDependencies=''
     else
         dependencies=$(__yarn_get_package_fields dependencies)
@@ -394,7 +400,7 @@ _yarn_upgrade() {
             ;;
     esac
     if [[ "$location" == global ]]; then
-        dependencies=$(__yarn_get_globals)
+        dependencies=$(__yarn_get_package_fields -g dependencies)
         devDependencies=''
     else
         dependencies=$(__yarn_get_package_fields dependencies)

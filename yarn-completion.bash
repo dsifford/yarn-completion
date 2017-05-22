@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 #
-# Version: 0.3.2
+# Version: 0.3.3
 # Yarn Version: 0.25.2
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -432,8 +432,9 @@ _yarn_why() {
         __yarn_filedir
     else
         modules=$(
-            find node_modules/ -maxdepth 1 -type d | # first-level node_modules dirs
-            sed -e 's|node_modules/||'               # remove 'node_modules/' prefix
+            find node_modules -maxdepth 1 -mindepth 1 -type d -not -name .bin |       
+            sort |                     
+            sed -e 's|node_modules/||' # Remove 'node_modules/' prefix
         )
         if [[ "$cur" == @* ]]; then
             modules=$(sed -e 's|$|/|' <<< "$modules") # append a trailing backslash

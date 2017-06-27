@@ -157,6 +157,7 @@ _yarn_create() {
 }
 
 _yarn_global() {
+    local subcmd="${words[$((counter+1))]}"
     local subcommands=(
         add
         bin
@@ -165,16 +166,15 @@ _yarn_global() {
         upgrade
         upgrade-interactive
     )
-
-    case "$prev" in
-        add|bin|remove|upgrade|upgrade_interactive)
-            local global_completions_func=_yarn_${prev}
+    case "$subcmd" in
+        add|bin|remove|upgrade|upgrade-interactive)
+            local global_completions_func=_yarn_${subcmd}
             declare -F "$global_completions_func" >/dev/null && $global_completions_func global
             ;;
         ls|--depth)
             _yarn_list
             ;;
-        global)
+        *)
             COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
             ;;
     esac

@@ -361,7 +361,7 @@ _yarn_remove() {
 
 _yarn_run() {
     [[ "$prev" != run ]] && return
-    COMPREPLY=( $( compgen -W "$(__yarn_get_package_fields scripts)" -- "$cur" ) )
+    COMPREPLY=( $( compgen -W "$(__yarn_get_package_fields scripts) env" -- "$cur" ) )
 }
 
 _yarn_tag() {

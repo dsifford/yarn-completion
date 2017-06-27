@@ -392,6 +392,7 @@ _yarn_upgrade() {
     local devDependencies
     local flags=(
         --ignore-engines
+        --latest
     )
     case "$cur" in
         -*)

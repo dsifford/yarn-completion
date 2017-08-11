@@ -17,13 +17,7 @@ $ curl -o ~/.yarn-completion https://raw.githubusercontent.com/dsifford/yarn-com
 $ echo -e '\n. ~/.yarn-completion' >> ~/.bashrc
 ```
 
-**`zsh`** (currently partially supported)
-```sh
-$ echo "
-autoload -U +X compinit && compinit
-autoload -U +X bashcompinit && bashcompinit
-. ~/.yarn-completion" >> ~/.zshrc
-```
+**`zsh`**: Official zsh completions can be found in the [zsh-completions](https://github.com/zsh-users/zsh-completions/blob/master/src/_yarn) repository.
 
 ### Installation on OSX with Homebrew
 ```sh
@@ -32,6 +26,9 @@ $ curl -L https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn
 ```
 Restart `Terminal`
 
+### Is your shell missing?
+
+Open an issue with your shell and I'll do my best to try and make it happen.
 
 ## License
 

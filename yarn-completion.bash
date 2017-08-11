@@ -543,7 +543,9 @@ _yarn() {
     if command -v _init_completion >/dev/null; then
         _init_completion
     else
-        _get_comp_words_by_ref cur prev words cword 
+        if command -v _get_comp_words_by_ref >/dev/null; then
+            _get_comp_words_by_ref cur prev words cword 
+        fi
     fi
 
     local command=yarn

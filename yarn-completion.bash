@@ -161,7 +161,7 @@ _yarn_global() {
     local subcommands=(
         add
         bin
-        ls
+        list
         remove
         upgrade
         upgrade-interactive
@@ -171,7 +171,7 @@ _yarn_global() {
             local global_completions_func=_yarn_${subcmd}
             declare -F "$global_completions_func" >/dev/null && $global_completions_func global
             ;;
-        ls|--depth)
+        list|--depth)
             _yarn_list
             ;;
         *)

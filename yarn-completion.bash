@@ -239,7 +239,8 @@ _yarn_info() {
 
 _yarn_init() {
     local flags=(
-        --yes
+        --yes -y
+        --private -p
     )
     case "$cur" in
         -*)

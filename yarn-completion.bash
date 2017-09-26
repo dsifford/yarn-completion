@@ -484,7 +484,6 @@ _yarn() {
         bin
         cache
         check
-        clean
         config
         create
         generate-lock-entry
@@ -518,6 +517,8 @@ _yarn() {
     local global_flags=(
         --cache-folder
         --check-files
+        --cwd
+        --emoji
         --flat
         --force
         --frozen-lockfile
@@ -531,6 +532,7 @@ _yarn() {
         --ignore-scripts
         --json
         --link-duplicates
+        --link-folder
         --modules-folder
         --mutex
         --network-concurrency
@@ -542,10 +544,12 @@ _yarn() {
         --non-interactive
         --offline
         --prefer-offline
+        --preferred-cache-folder
         --prod
         --production
         --proxy
         --pure-lockfile
+        --scripts-prepend-node-path
         --silent
         --skip-integrity-check
         --strict-semver

@@ -100,7 +100,7 @@ _yarn_cache() {
     local subcommands=(
         clean
         dir
-        ls
+        list
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
 }
@@ -276,7 +276,7 @@ _yarn_install() {
 _yarn_licenses() {
     [[ "$prev" != licenses ]] && return
     local subcommands=(
-        ls
+        list
         generate-disclaimer
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
@@ -314,8 +314,8 @@ _yarn_owner() {
     [[ "$prev" != owner ]] && return
     local subcommands=(
         add
-        ls
-        rm
+        list
+        remove
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
 }
@@ -380,8 +380,8 @@ _yarn_tag() {
     [[ "$prev" != tag ]] && return
     local subcommands=(
         add
-        ls
-        rm
+        list
+        remove
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
 }
@@ -392,8 +392,8 @@ _yarn_team() {
         add
         create
         destroy
-        ls
-        rm
+        list
+        remove
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
 }
@@ -479,6 +479,7 @@ _yarn() {
     local commands=(
         access
         add
+        autoclean
         bin
         cache
         check

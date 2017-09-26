@@ -83,6 +83,18 @@ _yarn_add() {
     esac
 }
 
+_yarn_autoclean() {
+    local flags=(
+        --force -F
+        --init -I
+    )
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W "${flags[*]}" -- "$cur" ) )
+            ;;
+    esac
+}
+
 _yarn_cache() {
     [[ "$prev" != cache ]] && return
     local subcommands=(

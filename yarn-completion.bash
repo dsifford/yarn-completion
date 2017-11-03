@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 #
-# Version: 0.5.0
-# Yarn Version: 1.1.0
+# Version: 0.5.1
+# Yarn Version: 1.3.2
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -475,8 +475,11 @@ _yarn_yarn() {
 }
 
 _yarn() {
-    local cur prev words cword
+    # Fixes https://github.com/dsifford/yarn-completion/issues/9
+    local prev_comp_wordbreaks=$COMP_WORDBREAKS
+    COMP_WORDBREAKS="\"'><=;|&(: "
 
+    local cur prev words cword
     local commands=(
         access
         add
@@ -586,6 +589,8 @@ _yarn() {
     local completions_func=_yarn_${command}
     declare -F "$completions_func" >/dev/null && $completions_func
 
+    # Resets back to users' settings
+    COMP_WORDBREAKS="$prev_comp_wordbreaks"
     return 0
 }
 

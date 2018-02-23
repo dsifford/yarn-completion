@@ -36,13 +36,16 @@ __yarn_get_package_fields() {
 
     parentField="$1"
 
-    [[ ! -e $package || ! $parentField ]] && return
+    [[ ! -f $package || ! $parentField ]] && return
 
     fields=$(
-        sed -n "/\"$parentField\": {/,/\},/p" < "$package" |
-        tail -n +2 |
-        grep -Eo '"[[:alnum:]@:./_-]+?"' |
-        grep -Eo '[[:alnum:]@:./_-]+'
+        sed -n '/"'"$parentField"'":[[:space:]]*{/,/^[[:space:]]*}/{
+            # exclude start and end patterns
+            //!{
+                # extract the text between the first pair of double quotes
+                s/^[[:space:]]*"\([^"]\+\)".\+/\1/p
+            }
+        }' "$package"
     )
     echo "$fields"
 }

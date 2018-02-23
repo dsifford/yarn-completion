@@ -30,6 +30,8 @@ __yarn_get_package_fields() {
             g)
                 package="$HOME/.config/yarn/global/package.json"
                 ;;
+            *)
+                ;;
         esac
     done
     shift $(( OPTIND - 1 ))
@@ -193,6 +195,11 @@ _yarn_global() {
             COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
             ;;
     esac
+}
+
+_yarn_help() {
+    [[ "$prev" != help ]] && return
+    COMPREPLY=( $( compgen -W "${commands[*]}" -- "$cur" ) )
 }
 
 _yarn_info() {
@@ -438,6 +445,14 @@ _yarn_version() {
     esac
 }
 
+_yarn_workspaces() {
+    [[ "$prev" != workspaces ]] && return
+    local subcommands=(
+        info
+    )
+    COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
+}
+
 _yarn_why() {
     local modules_folder
     local modules
@@ -492,6 +507,7 @@ _yarn() {
         check
         config
         create
+        exec
         generate-lock-entry
         global
         help
@@ -504,6 +520,7 @@ _yarn() {
         list
         login
         logout
+        node
         outdated
         owner
         pack
@@ -516,6 +533,9 @@ _yarn() {
         upgrade
         upgrade-interactive
         version
+        versions
+        workspace
+        workspaces
         why
         $( __yarn_get_package_fields scripts )
     )

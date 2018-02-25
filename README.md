@@ -21,18 +21,14 @@ $ echo -e '\n. ~/.yarn-completion' >> ~/.bashrc
 
 ### Installation on macOS with Homebrew
 
-1.  _(optional)_ It is recommended to use GNU `bash` and `sed` rather than the ones built into macOS (BSD), because otherwise there may be compatibility problems.
+1.  _(optional)_ It is recommended to use `bash` version >= 4.x.x rather MacOS's default (and dated) bash v3.
 
     ```bash
     brew install bash
-    brew install gnu-sed --with-default-names
     ## restart terminal
 
     bash --version
     ## GNU bash, version 4.x = OK
-
-    sed --version
-    ## sed (GNU sed) 4.x = OK
     ```
 
 2.  Install `bash-completion` if you have not done it yet:
@@ -47,10 +43,6 @@ $ echo -e '\n. ~/.yarn-completion' >> ~/.bashrc
     ```
 
 4.  Restart Terminal.
-
-### Is your shell missing?
-
-Open an issue with your shell and I'll do my best to try and make it happen.
 
 ## License
 

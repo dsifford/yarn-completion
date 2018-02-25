@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 #
-# Version: 0.6.0
+# Version: 0.6.1
 # Yarn Version: 1.5.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -22,7 +22,7 @@
 # @param $1 parentField  The first-level property of interest.
 #
 __yarn_get_package_fields() {
-    local OPTIND opt fields package parentField
+    local OPTIND opt package parentField
     package="$(pwd)/package.json"
 
     while getopts ":g" opt; do
@@ -40,16 +40,13 @@ __yarn_get_package_fields() {
 
     [[ ! -f $package || ! $parentField ]] && return
 
-    fields=$(
-        sed -n '/"'"$parentField"'":[[:space:]]*{/,/^[[:space:]]*}/{
-            # exclude start and end patterns
-            //!{
-                # extract the text between the first pair of double quotes
-                s/^[[:space:]]*"\([^"]\+\)".\+/\1/p
-            }
-        }' "$package"
-    )
-    echo "$fields"
+    sed -n '/"'"$parentField"'":[[:space:]]*{/,/^[[:space:]]*}/{
+        # exclude start and end patterns
+        //!{
+            # extract the text between the first pair of double quotes
+            s/^[[:space:]]*"\([^"]*\).*/\1/p
+        }
+    }' "$package"
 }
 
 # bash-completion _filedir backwards compatibility

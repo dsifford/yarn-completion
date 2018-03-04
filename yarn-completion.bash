@@ -118,6 +118,7 @@ _yarn_cache() {
 }
 
 _yarn_check() {
+    [[ "$prev" != check ]] && return
     local flags=(
         --integrity
     )

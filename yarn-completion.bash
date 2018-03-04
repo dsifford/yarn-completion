@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+# shellcheck shell=bash disable=2207
 #
 # Version: 0.6.1
 # Yarn Version: 1.5.0
@@ -98,13 +98,23 @@ _yarn_autoclean() {
 }
 
 _yarn_cache() {
-    [[ "$prev" != cache ]] && return
     local subcommands=(
         clean
         dir
         list
     )
-    COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
+    case "$prev" in
+        cache)
+            COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
+            ;;
+        list)
+            case "$cur" in
+                -*)
+                    COMPREPLY=( $( compgen -W "--pattern" -- "$cur" ) )
+                    ;;
+            esac
+            ;;
+    esac
 }
 
 _yarn_check() {

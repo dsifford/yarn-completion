@@ -304,11 +304,17 @@ _yarn_licenses() {
 _yarn_list() {
     local flags=(
         --depth
+        --pattern
     )
 
     case "$prev" in
+        list)
+            ;;
         --depth)
             COMPREPLY=( $( compgen -W '{0..9}' -- "$cur" ) )
+            return
+            ;;
+        *)
             return
             ;;
     esac

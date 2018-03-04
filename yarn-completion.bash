@@ -450,23 +450,34 @@ _yarn_upgrade() {
     local dependencies
     local devDependencies
     local flags=(
+        --caret
+        --exact
         --ignore-engines
-        --latest
+        --latest -L
+        --pattern
+        --scope -S
+        --tilde
     )
-    case "$cur" in
-        -*)
-            COMPREPLY=( $( compgen -W "${flags[*]}" -- "$cur" ) )
+    case "$prev" in
+        --pattern|--scope)
             return
             ;;
     esac
-    if [[ "$location" == global ]]; then
-        dependencies=$(__yarn_get_package_fields -g dependencies)
-        devDependencies=''
-    else
-        dependencies=$(__yarn_get_package_fields dependencies)
-        devDependencies=$(__yarn_get_package_fields devDependencies)
-    fi
-    COMPREPLY=( $( compgen -W "$dependencies $devDependencies" -- "$cur" ) )
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W "${flags[*]}" -- "$cur" ) )
+            ;;
+        *)
+            if [[ "$location" == global ]]; then
+                dependencies=$(__yarn_get_package_fields -g dependencies)
+                devDependencies=''
+            else
+                dependencies=$(__yarn_get_package_fields dependencies)
+                devDependencies=$(__yarn_get_package_fields devDependencies)
+            fi
+            COMPREPLY=( $( compgen -W "$dependencies $devDependencies" -- "$cur" ) )
+            ;;
+    esac
 }
 
 _yarn_version() {

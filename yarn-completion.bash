@@ -355,7 +355,11 @@ _yarn_pack() {
             return
             ;;
     esac
-    [[ "$prev" == --filename ]] && __yarn_filedir
+    case "$prev" in
+        --filename)
+            compopt -o dirnames
+            ;;
+    esac
 }
 
 _yarn_publish() {

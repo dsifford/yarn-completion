@@ -118,7 +118,7 @@ _yarn_cache() {
 }
 
 _yarn_check() {
-    [[ "$prev" != check ]] && return
+    [[ "$prev" != check ]] && returny 
     local flags=(
         --integrity
     )
@@ -280,7 +280,7 @@ _yarn_install() {
 
     case "$prev" in
         --modules-folder)
-            __yarn_filedir
+            compopt -o dirnames
             return
             ;;
     esac

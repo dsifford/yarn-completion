@@ -365,6 +365,7 @@ _yarn_pack() {
 _yarn_publish() {
     local flags=(
         --access
+        --new-version
         --tag
     )
     case "$prev" in
@@ -372,18 +373,17 @@ _yarn_publish() {
             COMPREPLY=( $( compgen -W "public restricted" -- "$cur" ) )
             return
             ;;
-        --tag)
+        --tag|--new-version)
             return
             ;;
     esac
+    compopt -o dirnames
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W "${flags[*]}" -- "$cur" ) )
             return
             ;;
     esac
-
-    __yarn_filedir
 }
 
 _yarn_remove() {

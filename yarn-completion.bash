@@ -409,8 +409,18 @@ _yarn_remove() {
 }
 
 _yarn_run() {
-    [[ "$prev" != run ]] && return
-    COMPREPLY=( $( compgen -W "$(__yarn_get_package_fields scripts) env" -- "$cur" ) )
+    local subcommands=(
+        env
+        $(__yarn_get_package_fields scripts)
+    )
+    case "$prev" in
+        run)
+            COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
+            ;;
+        *)
+            compopt -o dirnames
+            ;;
+    esac
 }
 
 _yarn_tag() {

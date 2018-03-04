@@ -390,14 +390,22 @@ _yarn_remove() {
     local location="$1"
     local dependencies
     local devDependencies
-    if [[ "$location" == 'global' ]]; then
-        dependencies=$(__yarn_get_package_fields -g dependencies)
-        devDependencies=''
-    else
-        dependencies=$(__yarn_get_package_fields dependencies)
-        devDependencies=$(__yarn_get_package_fields devDependencies)
-    fi
-    COMPREPLY=( $( compgen -W "$dependencies $devDependencies" -- "$cur" ) )
+    case "$cur" in 
+        -*)
+            # remove shares the same flags as install
+            _yarn_install
+            ;;
+        *)
+            if [[ "$location" == 'global' ]]; then
+                dependencies=$(__yarn_get_package_fields -g dependencies)
+                devDependencies=''
+            else
+                dependencies=$(__yarn_get_package_fields dependencies)
+                devDependencies=$(__yarn_get_package_fields devDependencies)
+            fi
+            COMPREPLY=( $( compgen -W "$dependencies $devDependencies" -- "$cur" ) )
+            ;;
+    esac
 }
 
 _yarn_run() {

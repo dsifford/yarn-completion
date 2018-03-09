@@ -19,7 +19,7 @@
 # Optional flags:
 #   -g  query     the package.json of the globals
 #   -t  FIELDTYPE the field type of interest (array, boolean, number, object, string)
-#
+# 
 # @param $1 field_key  The first-level property of interest.
 #
 __yarn_get_package_fields() {
@@ -54,11 +54,11 @@ __yarn_get_package_fields() {
     case "$field_type" in
         object)
             sed -n '/'"$field_key"':[[:space:]]*{/,/^[[:space:]]*}/{
-        # exclude start and end patterns
-        //!{
-            # extract the text between the first pair of double quotes
-            s/^[[:space:]]*"\([^"]*\).*/\1/p
-        }
+                # exclude start and end patterns
+                //!{
+                    # extract the text between the first pair of double quotes
+                    s/^[[:space:]]*"\([^"]*\).*/\1/p
+                }
             }' "$package_dot_json"
             ;;
         array)
@@ -67,7 +67,7 @@ __yarn_get_package_fields() {
                 //!{
                     # extract the text between the first pair of double quotes
                     s/^[[:space:]]*"\([^"]*\).*/\1/p
-}
+                }
             }' "$package_dot_json"
             ;;
         boolean|number)
@@ -89,8 +89,11 @@ __yarn_filedir() {
     compopt -o nospace
 }
 
-# `_count_args` backwards compatibility
-# Be sure to set `args` and `counter` locally before calling
+# `_count_args` backwards compatibility.
+#
+# The following variables must be declared prior to invocation:
+#   counter INT the start index to begin looking for commands
+#   args INT    the argument counter
 __yarn_count_args() {
     args=0
     counter=1
@@ -149,7 +152,7 @@ __yarn_get_command() {
 }
 
 _yarn_add() {
-    local flags=(
+    declare flags=(
         --dev
         --exact
         --optional
@@ -164,7 +167,7 @@ _yarn_add() {
 }
 
 _yarn_autoclean() {
-    local flags=(
+    declare flags=(
         --force -F
         --init -I
     )
@@ -176,7 +179,7 @@ _yarn_autoclean() {
 }
 
 _yarn_cache() {
-    local subcommands=(
+    declare subcommands=(
         clean
         dir
         list
@@ -197,7 +200,7 @@ _yarn_cache() {
 
 _yarn_check() {
     [[ "$prev" != check ]] && returny 
-    local flags=(
+    declare flags=(
         --integrity
     )
     case "$cur" in
@@ -208,13 +211,13 @@ _yarn_check() {
 }
 
 _yarn_config() {
-    local subcommands=(
+    declare subcommands=(
         delete
         get
         list
         set
     )
-    local known_keys=(
+    declare known_keys=(
         ignore-optional
         ignore-platform
         ignore-scripts
@@ -252,7 +255,7 @@ _yarn_config() {
 }
 
 _yarn_create() {
-    local args  counter
+    declare -i args counter
     __yarn_count_args
     if [[ $args -eq 2 ]]; then
         __yarn_filedir
@@ -260,8 +263,8 @@ _yarn_create() {
 }
 
 _yarn_global() {
-    local subcmd="${words[$((counter+1))]}"
-    local subcommands=(
+    declare subcmd="${words[$((counter+1))]}"
+    declare subcommands=(
         add
         bin
         list
@@ -271,7 +274,7 @@ _yarn_global() {
     )
     case "$subcmd" in
         add|bin|remove|upgrade|upgrade-interactive)
-            local global_completions_func=_yarn_${subcmd}
+            declare global_completions_func=_yarn_${subcmd}
             declare -F "$global_completions_func" >/dev/null && $global_completions_func global
             ;;
         list|--depth)
@@ -289,10 +292,10 @@ _yarn_help() {
 }
 
 _yarn_info() {
-    local flags=(
+    declare flags=(
         --json
     )
-    local standard_fields=(
+    declare standard_fields=(
         author
         bin
         bugs
@@ -318,7 +321,7 @@ _yarn_info() {
 
     [[ "$prev" == info ]] && return
 
-    local args counter
+    declare -i args counter
     __yarn_count_args
 
     case "$cur" in
@@ -334,7 +337,7 @@ _yarn_info() {
 }
 
 _yarn_init() {
-    local flags=(
+    declare flags=(
         --yes -y
         --private -p
     )
@@ -346,7 +349,7 @@ _yarn_init() {
 }
 
 _yarn_install() {
-    local flags=(
+    declare flags=(
         --flat
         --force
         --har
@@ -372,7 +375,7 @@ _yarn_install() {
 
 _yarn_licenses() {
     [[ "$prev" != licenses ]] && return
-    local subcommands=(
+    declare subcommands=(
         list
         generate-disclaimer
     )
@@ -380,7 +383,7 @@ _yarn_licenses() {
 }
 
 _yarn_list() {
-    local flags=(
+    declare flags=(
         --depth
         --pattern
     )
@@ -406,8 +409,8 @@ _yarn_list() {
 
 _yarn_outdated() {
     [[ "$prev" != outdated ]] && return
-    local dependencies
-    local devDependencies
+    declare dependencies
+    declare devDependencies
     dependencies=$(__yarn_get_package_fields dependencies)
     devDependencies=$(__yarn_get_package_fields devDependencies)
     COMPREPLY=( $( compgen -W "$dependencies $devDependencies" -- "$cur" ) )
@@ -415,7 +418,7 @@ _yarn_outdated() {
 
 _yarn_owner() {
     [[ "$prev" != owner ]] && return
-    local subcommands=(
+    declare subcommands=(
         add
         list
         remove
@@ -424,7 +427,7 @@ _yarn_owner() {
 }
 
 _yarn_pack() {
-    local flags=(
+    declare flags=(
         --filename
     )
     case "$cur" in
@@ -441,7 +444,7 @@ _yarn_pack() {
 }
 
 _yarn_publish() {
-    local flags=(
+    declare flags=(
         --access
         --new-version
         --tag
@@ -465,9 +468,9 @@ _yarn_publish() {
 }
 
 _yarn_remove() {
-    local location="$1"
-    local dependencies
-    local devDependencies
+    declare location="$1"
+    declare dependencies
+    declare devDependencies
     case "$cur" in 
         -*)
             # remove shares the same flags as install
@@ -487,7 +490,7 @@ _yarn_remove() {
 }
 
 _yarn_run() {
-    local subcommands=(
+    declare subcommands=(
         env
         $(__yarn_get_package_fields scripts)
     )
@@ -503,7 +506,7 @@ _yarn_run() {
 
 _yarn_tag() {
     [[ "$prev" != tag ]] && return
-    local subcommands=(
+    declare subcommands=(
         add
         list
         remove
@@ -513,7 +516,7 @@ _yarn_tag() {
 
 _yarn_team() {
     [[ "$prev" != team ]] && return
-    local subcommands=(
+    declare subcommands=(
         add
         create
         destroy
@@ -524,10 +527,10 @@ _yarn_team() {
 }
 
 _yarn_upgrade() {
-    local location="$1"
-    local dependencies
-    local devDependencies
-    local flags=(
+    declare location="$1"
+    declare dependencies
+    declare devDependencies
+    declare flags=(
         --caret
         --exact
         --ignore-engines
@@ -559,7 +562,7 @@ _yarn_upgrade() {
 }
 
 _yarn_version() {
-    local flags=(
+    declare flags=(
         --new-version
         --no-git-tag-version
     )
@@ -593,15 +596,15 @@ _yarn_workspace() {
 
 _yarn_workspaces() {
     [[ "$prev" != workspaces ]] && return
-    local subcommands=(
+    declare subcommands=(
         info
     )
     COMPREPLY=( $( compgen -W "${subcommands[*]}" -- "$cur" ) )
 }
 
 _yarn_why() {
-    local modules_folder
-    local modules
+    declare modules_folder
+    declare modules
 
     modules_folder="$(pwd)/node_modules"
     [ ! -d "$modules_folder" ] || [[ "$prev" != why ]] && return
@@ -623,7 +626,7 @@ _yarn_why() {
 }
 
 _yarn_yarn() {
-    local args counter
+    declare -i args counter
     __yarn_count_args
 
     case "$cur" in
@@ -641,11 +644,11 @@ _yarn_yarn() {
 
 _yarn() {
     # Fixes https://github.com/dsifford/yarn-completion/issues/9
-    local prev_comp_wordbreaks=$COMP_WORDBREAKS
+    declare prev_comp_wordbreaks=$COMP_WORDBREAKS
     COMP_WORDBREAKS="\"'><=;|&(: "
 
-    local cur prev words cword
-    local commands=(
+    declare cur prev words cword
+    declare commands=(
         access
         add
         autoclean
@@ -687,7 +690,7 @@ _yarn() {
         $( __yarn_get_package_fields scripts )
     )
 
-    local global_flags=(
+    declare global_flags=(
         --cache-folder
         --check-files
         --cwd
@@ -743,7 +746,7 @@ _yarn() {
     declare -i counter=1
     __yarn_get_command
 
-    local completions_func=_yarn_${command}
+    declare completions_func="_yarn_${cmd}"
     declare -F "$completions_func" >/dev/null && $completions_func
 
     # default back to path matching if no completions_func defined

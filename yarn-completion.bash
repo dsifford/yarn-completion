@@ -17,18 +17,29 @@
 # in a package.json file located in the current directory if it exists.
 #
 # Optional flags:
-#   -g      query the package.json of the globals
+#   -g  query     the package.json of the globals
+#   -t  FIELDTYPE the field type of interest (array, boolean, number, object, string)
 #
-# @param $1 parentField  The first-level property of interest.
+# @param $1 field_key  The first-level property of interest.
 #
 __yarn_get_package_fields() {
-    local OPTIND opt package parentField
-    package="$(pwd)/package.json"
+    declare field_key
+    declare field_type='object'
+    declare package_dot_json
+    package_dot_json="$(pwd)/package.json"
 
-    while getopts ":g" opt; do
+    declare OPTIND OPTARG opt 
+    while getopts ":gt:" opt; do
         case $opt in
             g)
-                package="$HOME/.config/yarn/global/package.json"
+                package_dot_json="$HOME/.config/yarn/global/package.json"
+                ;;
+            t)
+                case "$OPTARG" in
+                    array|boolean|number|object|string)
+                        field_type="$OPTARG"
+                        ;;
+                esac
                 ;;
             *)
                 ;;
@@ -36,17 +47,36 @@ __yarn_get_package_fields() {
     done
     shift $(( OPTIND - 1 ))
 
-    parentField="$1"
+    field_key="\"$1\""
 
-    [[ ! -f $package || ! $parentField ]] && return
+    [[ ! -f $package_dot_json || ! $field_key ]] && return
 
-    sed -n '/"'"$parentField"'":[[:space:]]*{/,/^[[:space:]]*}/{
+    case "$field_type" in
+        object)
+            sed -n '/'"$field_key"':[[:space:]]*{/,/^[[:space:]]*}/{
         # exclude start and end patterns
         //!{
             # extract the text between the first pair of double quotes
             s/^[[:space:]]*"\([^"]*\).*/\1/p
         }
-    }' "$package"
+            }' "$package_dot_json"
+            ;;
+        array)
+            sed -n '/'"$field_key"':[[:space:]]*\[/,/^[[:space:]]*]/{
+                # exclude start and end patterns
+                //!{
+                    # extract the text between the first pair of double quotes
+                    s/^[[:space:]]*"\([^"]*\).*/\1/p
+}
+            }' "$package_dot_json"
+            ;;
+        boolean|number)
+            sed -n 's/[[:space:]]*'"$field_key"':[[:space:]]*\([a-z0-9]*\)/\1/p' "$package_dot_json"
+            ;;
+        string)
+            sed -n 's/[[:space:]]*'"$field_key"':[[:space:]]*"\(.*\)".*/\1/p' "$package_dot_json"
+            ;;
+    esac
 }
 
 # bash-completion _filedir backwards compatibility
@@ -66,6 +96,54 @@ __yarn_count_args() {
     counter=1
     while [[ $counter -lt $cword ]]; do
         [[ ${words[$counter]} != -* ]] && (( args++ ))
+        (( counter++ ))
+    done
+}
+
+# Prints the nth word of the completion line, excluding flags
+# @param $1 idx  The 1-based index of the word of interest
+__yarn_nth_word() {
+    declare -i idx="$1"
+    declare -i counter=0
+    declare -i cword=0
+    while [ "$counter" -lt "$idx" ]; do
+        case "${words[$counter]}" in
+            [^-]*)
+                ((cword++))
+                if [ "$cword" -eq "$idx" ]; then
+                    echo "${words[$counter]}"
+                    return
+                fi
+                ;;
+        esac
+        ((counter++))
+    done
+}
+
+# Retrieves the current command word, which is the first occurring word after
+# `counter` that isn't a flag.
+# 
+# The following variables must be declared prior to invocation:
+#   counter INT the start index to begin looking for commands
+#   cmd         the command word
+__yarn_get_command() {
+    [[ "$(declare -p counter cmd 2> /dev/null | awk '{ printf "%s", $2 }')" == '-i--' ]] || {
+        echo '"counter" and "cmd" must be set by the caller and be the appropriate type'
+        exit 1
+    }
+    cmd=yarn
+    while [[ $counter -lt $COMP_CWORD ]]; do
+        case "${words[$counter]}" in
+            -*)
+                ;;
+            =)
+                (( counter++ ))
+                ;;
+            *)
+                cmd="${words[$counter]}"
+                break
+                ;;
+        esac
         (( counter++ ))
     done
 }
@@ -492,6 +570,27 @@ _yarn_version() {
     esac
 }
 
+_yarn_workspace() {
+    if [[ $prev == workspace ]]; then
+        # Prevents infinite recursion of workspace completion
+        [[ $COMP_CWORD == 2 ]] || return
+        declare -a workspaces
+        declare module_path
+        for module_path in $(__yarn_get_package_fields -t array workspaces); do
+            workspaces+=( "$(basename "$module_path")" )
+        done
+        COMPREPLY=( $( compgen -W "${workspaces[*]}" -- "$cur" ))
+        return
+    fi
+
+    declare cmd
+    declare -i counter=3
+    __yarn_get_command
+
+    declare completions_func=_yarn_${cmd}
+    declare -F "$completions_func" >/dev/null && $completions_func
+}
+
 _yarn_workspaces() {
     [[ "$prev" != workspaces ]] && return
     local subcommands=(
@@ -532,7 +631,8 @@ _yarn_yarn() {
             COMPREPLY=( $( compgen -W "${global_flags[*]}" -- "$cur" ) )
             ;;
         *)
-            if [[ $args -eq 0 ]]; then
+            if [[ $args == 0 || "$(__yarn_nth_word 2)" == 'workspace' ]]; then
+                compopt -o plusdirs # fallback to directory name completion if no matches
                 COMPREPLY=( $( compgen -W "${commands[*]}" -- "$cur" ) )
             fi
             ;;
@@ -639,22 +739,9 @@ _yarn() {
         fi
     fi
 
-    local command=yarn
-    local counter=1
-    while [[ $counter -lt $cword ]]; do
-        case "${words[$counter]}" in
-            -*)
-                ;;
-            =)
-                (( counter++ ))
-                ;;
-            *)
-                command="${words[$counter]}"
-                break
-                ;;
-        esac
-        (( counter++ ))
-    done
+    declare cmd
+    declare -i counter=1
+    __yarn_get_command
 
     local completions_func=_yarn_${command}
     declare -F "$completions_func" >/dev/null && $completions_func

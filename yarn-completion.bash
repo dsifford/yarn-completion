@@ -81,8 +81,8 @@ __yarn_get_package_fields() {
 
 # bash-completion _filedir backwards compatibility
 __yarn_filedir() {
-    if [[ "$cur" == @* ]]; then
-        COMPREPLY=( $( compgen -f -- "./node_modules/$cur" | grep -Eo '@.+' ) )
+    if [[ "$cur" == @* && -d ./node_modules ]]; then
+        COMPREPLY=( $( compgen -f -- "./node_modules/$cur" | sed 's/^[^@]*\(@.*\)/\1/' ) )
     else
         COMPREPLY=( $( compgen -f -- "$cur" ) )
     fi

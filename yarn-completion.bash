@@ -746,6 +746,13 @@ _yarn() {
     local completions_func=_yarn_${command}
     declare -F "$completions_func" >/dev/null && $completions_func
 
+    # default back to path matching if no completions_func defined
+    if declare -F "$completions_func" >/dev/null; then
+        $completions_func
+    else
+        __yarn_filedir
+    fi
+
     # Resets back to users' settings
     COMP_WORDBREAKS="$prev_comp_wordbreaks"
     return 0

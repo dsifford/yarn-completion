@@ -1,6 +1,6 @@
 # shellcheck shell=bash disable=2207
 #
-# Version: 0.7.0
+# Version: 0.7.1
 # Yarn Version: 1.5.1
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -130,10 +130,6 @@ __yarn_nth_word() {
 #   counter INT the start index to begin looking for commands
 #   cmd         the command word
 __yarn_get_command() {
-	[[ "$(declare -p counter cmd 2>/dev/null | awk '{ printf "%s", $2 }')" == '-i--' ]] || {
-		echo '"counter" and "cmd" must be set by the caller and be the appropriate type'
-		exit 1
-	}
 	cmd=yarn
 	while [[ $counter -lt $COMP_CWORD ]]; do
 		case "${words[$counter]}" in

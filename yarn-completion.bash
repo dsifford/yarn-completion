@@ -1,6 +1,6 @@
 # shellcheck shell=bash disable=2207
 #
-# Version: 0.7.2
+# Version: 0.7.3
 # Yarn Version: 1.6.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -26,13 +26,30 @@ __yarn_get_package_fields() {
     declare field_key
     declare field_type='object'
     declare package_dot_json
-    package_dot_json="$(pwd)/package.json"
+    declare cwd
+    cwd="$(pwd)"
+
+    while [[ $cwd != '/' ]]; do
+        if [[ -f "$cwd/package.json" ]]; then
+            package_dot_json="$cwd/package.json"
+            break
+        fi
+        cwd="$(dirname "$cwd")"
+    done
 
     declare OPTIND OPTARG opt
     while getopts ":gt:" opt; do
         case $opt in
             g)
-                package_dot_json="$HOME/.config/yarn/global/package.json"
+                if [[ -f $HOME/.config/yarn/global/package.json ]]; then
+                    package_dot_json="$HOME/.config/yarn/global/package.json"
+                elif [[ -f $HOME/.local/share/yarn/global/package.json ]]; then
+                    package_dot_json="$HOME/.local/share/yarn/global/package.json"
+                elif [[ -f $HOME/.yarn/global/package.json ]]; then
+                    package_dot_json="$HOME/.yarn/global/package.json"
+                else
+                    package_dot_json=""
+                fi
                 ;;
             t)
                 case "$OPTARG" in

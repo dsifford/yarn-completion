@@ -1,6 +1,6 @@
 {
   "name": "yarn-completion",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "repository": "https://github.com/dsifford/yarn-completion.git",
   "description": "shell autocompletion for yarn",
   "author": "Derek P Sifford <dereksifford@gmail.com>",

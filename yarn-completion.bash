@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=2207
 #
-# Version: 0.7.3
-# Yarn Version: 1.6.0
+# Version: 0.7.4
+# Yarn Version: 1.7.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #

@@ -21,7 +21,7 @@ $ echo -e '\n. ~/.yarn-completion' >> ~/.bashrc
 
 ### Installation on macOS with Homebrew
 
-1.  _(optional)_ It is recommended to use `bash` version >= 4.x.x rather MacOS's default (and dated) bash v3.
+1.  `bash` version >= 4.x.x is required, rather MacOS's default (and dated) bash v3.
 
     ```bash
     brew install bash

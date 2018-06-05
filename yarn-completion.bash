@@ -287,7 +287,7 @@ _yarn_global() {
     )
     case "$subcmd" in
         add | bin | remove | upgrade | upgrade-interactive)
-            declare global_completions_func=_yarn_${subcmd}
+            declare global_completions_func=_yarn_${subcmd//-/_}
             declare -F "$global_completions_func" >/dev/null && $global_completions_func global
             ;;
         list | --depth)
@@ -574,7 +574,7 @@ _yarn_upgrade() {
     esac
 }
 
-_yarn_upgrade-interactive() {
+_yarn_upgrade_interactive() {
     declare flags=(
         --latest
     )
@@ -617,7 +617,7 @@ _yarn_workspace() {
     declare -i counter=3
     __yarn_get_command
 
-    declare completions_func=_yarn_${cmd}
+    declare completions_func=_yarn_${cmd//-/_}
     declare -F "$completions_func" >/dev/null && $completions_func
 }
 
@@ -773,7 +773,7 @@ _yarn() {
     declare -i counter=1
     __yarn_get_command
 
-    declare completions_func="_yarn_${cmd}"
+    declare completions_func="_yarn_${cmd//-/_}"
     declare -F "$completions_func" >/dev/null && $completions_func
 
     # default back to path matching if no completions_func defined

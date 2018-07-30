@@ -288,7 +288,7 @@ _yarn_global() {
     case "$subcmd" in
         add | bin | remove | upgrade | upgrade-interactive)
             declare global_completions_func=_yarn_${subcmd//-/_}
-            declare -F "$global_completions_func" >/dev/null && $global_completions_func global
+            declare -F "$global_completions_func" > /dev/null && $global_completions_func global
             ;;
         list | --depth)
             _yarn_list
@@ -618,7 +618,7 @@ _yarn_workspace() {
     __yarn_get_command
 
     declare completions_func=_yarn_${cmd//-/_}
-    declare -F "$completions_func" >/dev/null && $completions_func
+    declare -F "$completions_func" > /dev/null && $completions_func
 }
 
 _yarn_workspaces() {
@@ -645,7 +645,7 @@ _yarn_why() {
                 | sed -e 's|node_modules/||' # Remove 'node_modules/' prefix
         )
         if [[ "$cur" == @* ]]; then
-            modules=$(sed -e 's|$|/|' <<<"$modules") # append a trailing backslash
+            modules=$(sed -e 's|$|/|' <<< "$modules") # append a trailing backslash
             compopt -o nospace
         fi
         COMPREPLY=($(compgen -W "$modules" -- "$cur"))
@@ -761,10 +761,10 @@ _yarn() {
     )
 
     COMPREPLY=()
-    if command -v _init_completion >/dev/null; then
+    if command -v _init_completion > /dev/null; then
         _init_completion
     else
-        if command -v _get_comp_words_by_ref >/dev/null; then
+        if command -v _get_comp_words_by_ref > /dev/null; then
             _get_comp_words_by_ref cur prev words cword
         fi
     fi
@@ -774,10 +774,10 @@ _yarn() {
     __yarn_get_command
 
     declare completions_func="_yarn_${cmd//-/_}"
-    declare -F "$completions_func" >/dev/null && $completions_func
+    declare -F "$completions_func" > /dev/null && $completions_func
 
     # default back to path matching if no completions_func defined
-    if declare -F "$completions_func" >/dev/null; then
+    if declare -F "$completions_func" > /dev/null; then
         $completions_func
     else
         __yarn_filedir

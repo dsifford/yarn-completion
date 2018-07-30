@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=2207
 #
-# Version: 0.7.4
-# Yarn Version: 1.7.0
+# Version: 0.8.0
+# Yarn Version: 1.9.2
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -460,6 +460,7 @@ _yarn_publish() {
     declare flags=(
         --access
         --new-version
+        --non-interactive
         --tag
     )
     case "$prev" in
@@ -590,8 +591,12 @@ _yarn_upgrade_interactive() {
 
 _yarn_version() {
     declare flags=(
+        --major
+        --minor
         --new-version
+        --no-commit-hooks
         --no-git-tag-version
+        --patch
     )
     case "$cur" in
         -*)
@@ -741,6 +746,7 @@ _yarn() {
         --network-concurrency
         --network-timeout
         --no-bin-links
+        --no-default-rc
         --no-emoji
         --no-lockfile
         --no-progress
@@ -756,6 +762,7 @@ _yarn() {
         --silent
         --skip-integrity-check
         --strict-semver
+        --use-rc
         --verbose
         --version
     )

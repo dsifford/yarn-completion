@@ -1,4 +1,5 @@
 # shellcheck shell=bash disable=2207
+# vim: set fdm=syntax:
 #
 # Version: 0.8.0
 # Yarn Version: 1.9.2
@@ -364,6 +365,7 @@ _yarn_init() {
 _yarn_install() {
     declare flags=(
         --flat
+        --focus
         --force
         --har
         --modules-folder

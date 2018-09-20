@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2119,SC2034
+
+TEST_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# shellcheck source=./utils.sh
+source "$TEST_DIR"/utils.sh
+
+declare -i FALURES=0
+
+describe 'Checking top-level commands'
+{
+	it should have matching commands
+	t=$(
+		declare output
+		output=$(LC_ALL=C comm -3 <(get_commands) <(get_completions yarn ' '))
+		if [[ ! -z $output ]]; then
+			echo ======
+			echo
+			echo ERROR: Mismatched top-level commands found...
+			echo "$output"
+			exit 1
+		fi
+		exit 0
+	)
+	passfail "$t"
+
+	it should have matching global options
+	t=$(
+		declare output
+		output=$(LC_ALL=C comm -3 <(get_options -g) <(get_completions yarn -))
+		if [[ ! -z $output ]]; then
+			echo ERROR: Mismatched global command options found...
+			echo "$output"
+			exit 1
+		fi
+		exit 0
+	)
+	passfail "$t"
+}
+
+describe 'Checking top-level command options'
+{
+	while read -r cmd; do
+		it "[$cmd]" should have matching options
+		t=$(
+			declare output
+			output=$(LC_ALL=C comm -3 <(get_options "$cmd") <(get_completions yarn "$cmd" -))
+			if [[ ! -z $output ]]; then
+				prepend '  | ' <<- EOF
+					ERROR ($cmd): mismatched options found...
+					
+					$output
+				EOF
+				exit 1
+			fi
+			exit 0
+		)
+		passfail "$t"
+	done < <(get_commands)
+}
+
+echo
+echo "There were $FAILURES failures."
+exit $FAILURES

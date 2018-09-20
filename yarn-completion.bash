@@ -167,11 +167,12 @@ __yarn_get_command() {
 
 _yarn_add() {
 	declare flags=(
-		--dev
-		--exact
-		--optional
-		--peer
-		--tilde
+		--dev -D
+		--exact -E
+		--optional -O
+		--peer -P
+		--tilde -T
+		--ignore-workspace-root-check -W
 	)
 	case "$cur" in
 		-*)
@@ -200,7 +201,7 @@ _yarn_cache() {
 	)
 	case "$prev" in
 		cache)
-			COMPREPLY=($(compgen -W "${subcommands[*]}" -- "$cur"))
+			COMPREPLY=($(compgen -W "${subcommands[*]} --pattern" -- "$cur"))
 			;;
 		list)
 			case "$cur" in
@@ -213,9 +214,10 @@ _yarn_cache() {
 }
 
 _yarn_check() {
-	[[ "$prev" != check ]] && returny
+	[[ "$prev" != check ]] && return
 	declare flags=(
 		--integrity
+		--verify-tree
 	)
 	case "$cur" in
 		-*)
@@ -276,8 +278,22 @@ _yarn_create() {
 	fi
 }
 
+_yarn_generate_lock_entry() {
+	declare flags=(
+		--resolved
+		--use-manifest
+	)
+	case "$cur" in
+		-*)
+			COMPREPLY=($(compgen -W "${flags[*]}" -- "$cur"))
+			;;
+	esac
+}
+
 _yarn_global() {
-	declare subcmd="${words[$((counter + 1))]}"
+	declare flags=(
+		--prefix
+	)
 	declare subcommands=(
 		add
 		bin
@@ -286,6 +302,8 @@ _yarn_global() {
 		upgrade
 		upgrade-interactive
 	)
+	declare subcmd="${words[$((counter + 1))]}"
+
 	case "$subcmd" in
 		add | bin | remove | upgrade | upgrade-interactive)
 			declare global_completions_func=_yarn_${subcmd//-/_}
@@ -295,7 +313,7 @@ _yarn_global() {
 			_yarn_list
 			;;
 		*)
-			COMPREPLY=($(compgen -W "${subcommands[*]}" -- "$cur"))
+			COMPREPLY=($(compgen -W "${subcommands[*]} ${flags[*]}" -- "$cur"))
 			;;
 	esac
 }
@@ -443,7 +461,7 @@ _yarn_owner() {
 
 _yarn_pack() {
 	declare flags=(
-		--filename
+		--filename -f
 	)
 	case "$cur" in
 		-*)
@@ -461,8 +479,13 @@ _yarn_pack() {
 _yarn_publish() {
 	declare flags=(
 		--access
+		--major
+		--message
+		--minor
 		--new-version
-		--non-interactive
+		--no-commit-hooks
+		--no-git-tag-version
+		--patch
 		--tag
 	)
 	case "$prev" in
@@ -547,16 +570,15 @@ _yarn_upgrade() {
 	declare dependencies
 	declare devDependencies
 	declare flags=(
-		--caret
-		--exact
-		--ignore-engines
+		--caret -C
+		--exact -E
 		--latest -L
-		--pattern
+		--pattern -P
 		--scope -S
-		--tilde
+		--tilde -T
 	)
 	case "$prev" in
-		--pattern | --scope)
+		--pattern | -P | --scope | -S)
 			return
 			;;
 	esac
@@ -579,7 +601,11 @@ _yarn_upgrade() {
 
 _yarn_upgrade_interactive() {
 	declare flags=(
+		--caret -C
+		--exact -E
 		--latest
+		--scope -S
+		--tilde -T
 	)
 	case "$cur" in
 		-*)
@@ -594,6 +620,7 @@ _yarn_upgrade_interactive() {
 _yarn_version() {
 	declare flags=(
 		--major
+		--message
 		--minor
 		--new-version
 		--no-commit-hooks
@@ -730,11 +757,12 @@ _yarn() {
 		--cwd
 		--emoji
 		--flat
+		--focus
 		--force
 		--frozen-lockfile
 		--global-folder
 		--har
-		--help
+		--help -h
 		--https-proxy
 		--ignore-engines
 		--ignore-optional
@@ -749,8 +777,8 @@ _yarn() {
 		--network-timeout
 		--no-bin-links
 		--no-default-rc
-		--no-emoji
 		--no-lockfile
+		--no-node-version-check
 		--no-progress
 		--non-interactive
 		--offline
@@ -760,13 +788,15 @@ _yarn() {
 		--production
 		--proxy
 		--pure-lockfile
+		--registry
 		--scripts-prepend-node-path
-		--silent
+		--silent -s
 		--skip-integrity-check
 		--strict-semver
-		--use-rc
+		--update-checksums
+		--use-yarnrc
 		--verbose
-		--version
+		--version -v
 	)
 
 	COMPREPLY=()
@@ -797,4 +827,8 @@ _yarn() {
 	return 0
 }
 
-complete -F _yarn yarn
+if [[ ${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 4 ]]; then
+	complete -o nosort -F _yarn yarn
+else
+	complete -F _yarn yarn
+fi

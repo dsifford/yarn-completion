@@ -1,0 +1,17 @@
+language: bash
+
+os:
+	- linux
+	- osx
+
+addons:
+	apt:
+		packages:
+			- bash-completion
+
+before_install:
+	- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+	- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bash-completion@2 gnu-getopt; fi
+
+script:
+	- ./tests/test

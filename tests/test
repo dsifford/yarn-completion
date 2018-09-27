@@ -34,11 +34,11 @@ describe 'Environment checks'
 		declare actual expected
 		actual=$(sed -n 's/# Yarn Version: \([^ ]*\)/\1/p' "$COMPLETION_SRC")
 		expected=$(yarn --version)
-		if [[ $actual != "$expected" ]]; then
+		if [[ $actual != "${expected%-*}" ]]; then
 			prepend '  | ' <<- EOF
 				ERROR: mismatched yarn version line in src file.
 				
-				expected: $expected
+				expected: ${expected%-*}
 				received: $actual
 			EOF
 			exit 1

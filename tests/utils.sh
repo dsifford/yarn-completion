@@ -116,8 +116,10 @@ get_options() {
 		)
 	fi
 
-	[ ! -z "$local_options" ] && echo "$local_options"
-	((global)) && echo "$global_options"
+	{
+		[ ! -z "$local_options" ] && echo "$local_options"
+		((global)) && echo "$global_options"
+	} | LC_ALL=C sort -u
 }
 
 ###
@@ -125,13 +127,13 @@ get_options() {
 ##
 
 describe() {
-	echo_fill --fill = '' 
+	echo_fill --fill = ''
 	echo "$@"
 	echo_fill --fill = ''
 }
 
 it() {
-	echo_fill -n --columns 64 "  $*" 
+	echo_fill -n --columns 64 "  $*"
 }
 
 passfail() {
@@ -193,7 +195,7 @@ echo_fill() {
 				;;
 			*)
 				exit 1
-			;;
+				;;
 		esac
 	done
 	input="$*"

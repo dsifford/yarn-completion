@@ -54,11 +54,12 @@ describe 'Checking top-level commands'
 	t=$(
 		declare output
 		output=$(LC_ALL=C comm -3 <(get_commands) <(get_completions yarn ' '))
-		if [[ ! -z $output ]]; then
-			echo ======
-			echo
-			echo ERROR: Mismatched top-level commands found...
-			echo "$output"
+		if [[ -n $output ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched top-level commands found
+				
+				$output
+			EOF
 			exit 1
 		fi
 		exit 0
@@ -69,9 +70,12 @@ describe 'Checking top-level commands'
 	t=$(
 		declare output
 		output=$(LC_ALL=C comm -3 <(get_options -g) <(get_completions yarn -))
-		if [[ ! -z $output ]]; then
-			echo ERROR: Mismatched global command options found...
-			echo "$output"
+		if [[ -n $output ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched global command options found
+				
+				$output
+			EOF
 			exit 1
 		fi
 		exit 0
@@ -85,10 +89,10 @@ describe 'Checking top-level command options'
 		it "[$cmd]" should have matching options
 		t=$(
 			declare output
-			output=$(LC_ALL=C comm -3 <(get_options -g "$cmd" | LC_ALL=C sort -u) <(get_completions yarn "$cmd" - | LC_ALL=C sort -u))
+			output=$(LC_ALL=C comm -3 <(get_options -g "$cmd") <(get_completions yarn "$cmd" -))
 			if [[ ! -z $output ]]; then
 				prepend '  | ' <<- EOF
-					ERROR ($cmd): mismatched options found...
+					ERROR ($cmd): mismatched options found
 					
 					$output
 				EOF

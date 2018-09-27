@@ -2,7 +2,7 @@
 # vim: set fdm=syntax:
 #
 # Version: 0.8.0
-# Yarn Version: 1.10.1
+# Yarn Version: 1.12.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -602,6 +602,14 @@ _yarn_list() {
 	return 1
 }
 
+_yarn_node() {
+	((depth++))
+	flags=(
+		--into
+	)
+	return 1
+}
+
 _yarn_outdated() {
 	((depth++))
 	case "$cur" in
@@ -758,6 +766,28 @@ _yarn_team() {
 					;;
 			esac
 			;;
+	esac
+	return 1
+}
+
+_yarn_unplug() {
+	((depth++))
+	flags=(
+		--clear
+		--clear-all
+	)
+	case "$cur" in
+		-*) ;;
+		*)
+			COMPREPLY=(
+				$(compgen -W "
+					$(__yarn_get_package_fields dependencies)
+					$(__yarn_get_package_fields devDependencies)
+					" -- "$cur")
+			)
+			return 0
+			;;
+
 	esac
 	return 1
 }
@@ -959,6 +989,7 @@ _yarn() {
 		tag
 		team
 		unlink
+		unplug
 		upgrade
 		upgrade-interactive
 		version
@@ -979,6 +1010,7 @@ _yarn() {
 		--cache-folder
 		--cwd
 		--global-folder
+		--into
 		--link-folder
 		--modules-folder
 		--preferred-cache-folder
@@ -1005,11 +1037,11 @@ _yarn() {
 	)
 	declare -ar skipped_arg_flags=(
 		--https-proxy
-		--proxy
 		--message
 		--mutex
 		--new-version
 		--pattern -P
+		--proxy
 		--registry
 		--resolved
 		--scope -S
@@ -1029,7 +1061,9 @@ _yarn() {
 		--cache-folder
 		--check-files
 		--cwd
+		--disable-pnp
 		--emoji
+		--enable-pnp --pnp
 		--flat
 		--focus
 		--force
@@ -1052,9 +1086,9 @@ _yarn() {
 		--no-bin-links
 		--no-default-rc
 		--no-lockfile
+		--non-interactive
 		--no-node-version-check
 		--no-progress
-		--non-interactive
 		--offline
 		--prefer-offline
 		--preferred-cache-folder

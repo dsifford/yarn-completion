@@ -17,4 +17,5 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"; fi
 
 script:
+  - /usr/bin/env bash -c 'echo "$BASH_VERSION"'
   - ./tests/test

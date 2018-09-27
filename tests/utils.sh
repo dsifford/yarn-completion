@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1003
 
 for src in \
 	"$TEST_DIR"/../yarn-completion.bash \
@@ -92,8 +93,8 @@ get_options() {
 			-e '/Options:/,/Commands:/{
 				s/DEPRECATED//
 				t end
-				s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\n\2/p
-				s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\n\2/p
+				s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
+				s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
 				s/^[[:blank:]]*\(--[a-z-]*\).*/\1/p
 				:end
 			}' | LC_ALL=C sort -u
@@ -106,8 +107,8 @@ get_options() {
 					yarn help "$1" | sed -n '/Options:/,/Commands:/{
 						s/DEPRECATED//
 						t end
-						s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\n\2/p
-						s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\n\2/p
+						s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
+						s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
 						s/^[[:blank:]]*\(--[a-z-]*\).*/\1/p
 						:end
 					}' | LC_ALL=C sort -u

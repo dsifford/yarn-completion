@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2119,SC2034
 
+echo BASH VERSION ================
+echo "$BASH_VERSION"
+echo =============================
+
 TEST_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./utils.sh

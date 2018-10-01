@@ -34,6 +34,7 @@ $ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-
 3.  Install `yarn-completion`:
 
     ```sh
+	mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-completion}}/completions/"
     curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-completion}}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
     ```
 

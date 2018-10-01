@@ -45,6 +45,16 @@ $ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-
 
 **No**. Bash 3 is now 9 years outdated (at time of writing). There is no conceivable reason why anybody would or should still be using bash 3. Upgrade to bash 4.
 
+> Completion fails for run scripts that contains a colon.
+
+This is a feature of bash. Enable `menu-complete` in your `~/.inputrc` if you'd prefer a more seamless experience.
+
+```
+# Cycle through completions, rather than dumping all options
+TAB:       menu-complete
+"\e[Z":    menu-complete-backward
+```
+
 ## License
 
 MIT

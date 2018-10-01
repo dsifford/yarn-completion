@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=2207
 # vim: set fdm=syntax:
 #
-# Version: 0.8.0
+# Version: 0.9.0
 # Yarn Version: 1.12.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)

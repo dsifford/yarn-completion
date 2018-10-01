@@ -2,11 +2,51 @@
 # shellcheck disable=SC2119,SC2034
 
 TEST_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+COMPLETION_SRC="$TEST_DIR"/../yarn-completion.bash
 
 # shellcheck source=./utils.sh
 source "$TEST_DIR"/utils.sh
 
 declare -i FALURES=0
+
+describe 'Environment checks'
+{
+	it should match completion version line in src file
+	t=$(
+		declare actual expected
+		actual=$(sed -n 's/# Version: \([^ ]*\)/\1/p' "$COMPLETION_SRC")
+		expected=$(git describe --abbrev=0)
+		if [[ $actual != "${expected#v}" ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched completion version line in src file.
+				
+				expected: ${expected#v}
+				received: $actual
+			EOF
+			exit 1
+		fi
+		exit 0
+	)
+	passfail "$t"
+
+	it should match yarn version line in src file
+	t=$(
+		declare actual expected
+		actual=$(sed -n 's/# Yarn Version: \([^ ]*\)/\1/p' "$COMPLETION_SRC")
+		expected=$(yarn --version)
+		if [[ $actual != "${expected%-*}" ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched yarn version line in src file.
+				
+				expected: ${expected%-*}
+				received: $actual
+			EOF
+			exit 1
+		fi
+		exit 0
+	)
+	passfail "$t"
+}
 
 describe 'Checking top-level commands'
 {
@@ -14,11 +54,12 @@ describe 'Checking top-level commands'
 	t=$(
 		declare output
 		output=$(LC_ALL=C comm -3 <(get_commands) <(get_completions yarn ' '))
-		if [[ ! -z $output ]]; then
-			echo ======
-			echo
-			echo ERROR: Mismatched top-level commands found...
-			echo "$output"
+		if [[ -n $output ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched top-level commands found
+				
+				$output
+			EOF
 			exit 1
 		fi
 		exit 0
@@ -29,9 +70,12 @@ describe 'Checking top-level commands'
 	t=$(
 		declare output
 		output=$(LC_ALL=C comm -3 <(get_options -g) <(get_completions yarn -))
-		if [[ ! -z $output ]]; then
-			echo ERROR: Mismatched global command options found...
-			echo "$output"
+		if [[ -n $output ]]; then
+			prepend '  | ' <<- EOF
+				ERROR: mismatched global command options found
+				
+				$output
+			EOF
 			exit 1
 		fi
 		exit 0
@@ -45,10 +89,10 @@ describe 'Checking top-level command options'
 		it "[$cmd]" should have matching options
 		t=$(
 			declare output
-			output=$(LC_ALL=C comm -3 <(get_options "$cmd") <(get_completions yarn "$cmd" -))
+			output=$(LC_ALL=C comm -3 <(get_options -g "$cmd") <(get_completions yarn "$cmd" -))
 			if [[ ! -z $output ]]; then
 				prepend '  | ' <<- EOF
-					ERROR ($cmd): mismatched options found...
+					ERROR ($cmd): mismatched options found
 					
 					$output
 				EOF
@@ -61,5 +105,10 @@ describe 'Checking top-level command options'
 }
 
 echo
-echo "There were $FAILURES failures."
+if ((FAILURES)); then
+	echo There were "$FAILURES" failures.
+else
+	echo All tests passed successfully.
+fi
+
 exit $FAILURES

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1003
 
 for src in \
 	"$TEST_DIR"/../yarn-completion.bash \
@@ -90,9 +91,12 @@ get_options() {
 	global_options=$(
 		yarn help | sed -n \
 			-e '/Options:/,/Commands:/{
-				s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\n\2/p
-				s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\n\2/p
+				s/DEPRECATED//
+				t end
+				s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
+				s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
 				s/^[[:blank:]]*\(--[a-z-]*\).*/\1/p
+				:end
 			}' | LC_ALL=C sort -u
 	)
 
@@ -101,17 +105,22 @@ get_options() {
 			LC_ALL=C comm -23 \
 				<(
 					yarn help "$1" | sed -n '/Options:/,/Commands:/{
-						s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\n\2/p
-						s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\n\2/p
+						s/DEPRECATED//
+						t end
+						s/^[[:blank:]]*\(-[[:alpha:]]\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
+						s/^[[:blank:]]*\(--[a-z-]*\), \(--[a-z-]*\).*/\1\'$'\n''\2/p
 						s/^[[:blank:]]*\(--[a-z-]*\).*/\1/p
+						:end
 					}' | LC_ALL=C sort -u
 				) \
 				<(echo "$global_options")
 		)
 	fi
 
-	[ ! -z "$local_options" ] && echo "$local_options"
-	((global)) && echo "$global_options"
+	{
+		[ ! -z "$local_options" ] && echo "$local_options"
+		((global)) && echo "$global_options"
+	} | LC_ALL=C sort -u
 }
 
 ###
@@ -119,13 +128,13 @@ get_options() {
 ##
 
 describe() {
-	echo_fill --fill = '' 
+	echo_fill --fill = ''
 	echo "$@"
 	echo_fill --fill = ''
 }
 
 it() {
-	echo_fill -n --columns 64 "  $*" 
+	echo_fill -n --columns 64 "  $*"
 }
 
 passfail() {
@@ -187,7 +196,7 @@ echo_fill() {
 				;;
 			*)
 				exit 1
-			;;
+				;;
 		esac
 	done
 	input="$*"

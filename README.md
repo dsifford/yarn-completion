@@ -7,7 +7,7 @@
 To enable on-demand completion loading, download the completion file to the predefined bash-completion user directory.
 
 ```sh
-$ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-completion}}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
+$ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
 ```
 
 ### Installation on macOS with Homebrew
@@ -34,8 +34,8 @@ $ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-
 3.  Install `yarn-completion`:
 
     ```sh
-	mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-completion}}/completions/"
-    curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share/bash-completion}}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
+    mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions"
+    curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
     ```
 
 4.  Restart Terminal.

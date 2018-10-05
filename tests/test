@@ -11,24 +11,6 @@ declare -i FALURES=0
 
 describe 'Environment checks'
 {
-	it should match completion version line in src file
-	t=$(
-		declare actual expected
-		actual=$(sed -n 's/# Version: \([^ ]*\)/\1/p' "$COMPLETION_SRC")
-		expected=$(git tag --sort=-v:refname | head -n1)
-		if [[ $actual != "${expected#v}" ]]; then
-			prepend '  | ' <<- EOF
-				ERROR: mismatched completion version line in src file.
-				
-				expected: ${expected#v}
-				received: $actual
-			EOF
-			exit 1
-		fi
-		exit 0
-	)
-	passfail "$t"
-
 	it should match yarn version line in src file
 	t=$(
 		declare actual expected

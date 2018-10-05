@@ -2,7 +2,7 @@
 # vim: set fdm=syntax:
 #
 # Version: 0.9.0
-# Yarn Version: 1.12.0
+# Yarn Version: 1.13.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -307,6 +307,14 @@ _yarn_add() {
 	return 1
 }
 
+_yarn_audit() {
+	((depth++))
+	flags=(
+		--summary
+	)
+	return 1
+}
+
 _yarn_autoclean() {
 	((depth++))
 	flags=(
@@ -568,6 +576,9 @@ _yarn_init() {
 
 _yarn_install() {
 	((depth++))
+	flags=(
+		--audit -A
+	)
 	return 1
 }
 
@@ -960,6 +971,7 @@ _yarn() {
 	declare -ar commands=(
 		access
 		add
+		audit
 		autoclean
 		bin
 		cache
@@ -994,9 +1006,9 @@ _yarn() {
 		upgrade-interactive
 		version
 		versions
+		why
 		workspace
 		workspaces
-		why
 		$(__yarn_get_package_fields scripts)
 	)
 	declare -a subcommands=()

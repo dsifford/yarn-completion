@@ -15,7 +15,7 @@ describe 'Environment checks'
 	t=$(
 		declare actual expected
 		actual=$(sed -n 's/# Version: \([^ ]*\)/\1/p' "$COMPLETION_SRC")
-		expected=$(git describe --abbrev=0)
+		expected=$(git tag --sort=-v:refname | head -n1)
 		if [[ $actual != "${expected#v}" ]]; then
 			prepend '  | ' <<- EOF
 				ERROR: mismatched completion version line in src file.

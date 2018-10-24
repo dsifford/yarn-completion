@@ -1,4 +1,4 @@
-# yarn-completion
+# yarn-completion [![Build Status](https://travis-ci.com/dsifford/yarn-completion.svg?branch=master)](https://travis-ci.com/dsifford/yarn-completion)
 
 > Bash ^4.x completion for [Yarn](https://github.com/yarnpkg/yarn)
 

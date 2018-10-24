@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=2207
 # vim: set fdm=syntax:
 #
-# Version: 0.10.0
+# Version: 0.11.0
 # Yarn Version: 1.13.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -1052,6 +1052,7 @@ _yarn() {
 		--message
 		--mutex
 		--new-version
+		--otp
 		--pattern -P
 		--proxy
 		--registry
@@ -1102,6 +1103,7 @@ _yarn() {
 		--no-node-version-check
 		--no-progress
 		--offline
+		--otp
 		--prefer-offline
 		--preferred-cache-folder
 		--prod

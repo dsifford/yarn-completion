@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=2207
 # vim: set fdm=syntax:
 #
-# Version: 0.11.0
+# Version: 0.12.0
 # Yarn Version: 1.13.0
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
@@ -667,6 +667,31 @@ _yarn_pack() {
 	return 1
 }
 
+_yarn_policies() {
+	((depth++))
+	declare standard_policies=(
+		latest
+		nightly
+		rc
+	)
+
+	declare -i args
+	__yarn_count_args -d $depth
+
+	case "$cur" in
+		-*) ;;
+		*)
+			case "$args" in
+				0)
+					COMPREPLY=($(compgen -W "${standard_policies[*]}" -- "$cur"))
+					return 0
+					;;
+			esac
+			;;
+	esac
+	return 1
+}
+
 _yarn_publish() {
 	((depth++))
 	flags=(
@@ -995,6 +1020,7 @@ _yarn() {
 		outdated
 		owner
 		pack
+		policies
 		publish
 		remove
 		run

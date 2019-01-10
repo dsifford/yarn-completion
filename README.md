@@ -19,6 +19,8 @@ $ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash
 
     # Add bash 4 to /etc/shells
     sudo echo /usr/local/bin/bash >> /etc/shells
+	# or
+	echo /usr/local/bin/bash | sudo tee -a /etc/shells
 
     # Set bash 4 as your default login shell
     chsh -s /usr/local/bin/bash

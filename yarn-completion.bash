@@ -18,10 +18,11 @@
 # Parses and extracts data from package.json files.
 #
 # Usage:
-#	__yarn_get_package_fields [-g] [-t FIELDTYPE] <field-key>
+#	__yarn_get_package_fields [-g] [-t FIELDTYPE] [-p PATH] <field-key>
 #
 # Options:
 #   -g			  Parse global package.json file, if available
+#   -p PATH       The path to the package.json
 #   -t FIELDTYPE  The field type being parsed (array|boolean|number|object|string) [default: object]
 #
 # Notes:
@@ -40,8 +41,11 @@ __yarn_get_package_fields() {
 		cwd="${cwd%/*}"
 	done
 
-	while getopts ":gt:" opt; do
+	while getopts ":gp:t:" opt; do
 		case $opt in
+			p)
+		        cwd=$OPTARG
+		        ;;
 			g)
 				if [[ -f $HOME/.config/yarn/global/package.json ]]; then
 					package_dot_json="$HOME/.config/yarn/global/package.json"
@@ -64,6 +68,7 @@ __yarn_get_package_fields() {
 
 		esac
 	done
+
 	shift $((OPTIND - 1))
 
 	field_key='"'$1'"'
@@ -902,7 +907,8 @@ _yarn_workspace() {
 					declare workspace_path
 					declare -a workspaces=()
 					for workspace_path in $(__yarn_get_package_fields -t array workspaces); do
-						workspaces+=("$(basename "$workspace_path")")
+					    basename="$(basename "$workspace_path")"
+						workspaces+=("$(__yarn_get_package_fields -p $basename -t string name)")
 					done
 					COMPREPLY=($(compgen -W "${workspaces[*]}" -- "$cur"))
 					return 0

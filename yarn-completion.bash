@@ -45,6 +45,7 @@ __yarn_get_package_fields() {
 		case $opt in
 			p)
 		        cwd=$OPTARG
+				package_dot_json="$cwd/package.json"
 		        ;;
 			g)
 				if [[ -f $HOME/.config/yarn/global/package.json ]]; then
@@ -907,8 +908,11 @@ _yarn_workspace() {
 					declare workspace_path
 					declare -a workspaces=()
 					for workspace_path in $(__yarn_get_package_fields -t array workspaces); do
-					    basename="$(basename "$workspace_path")"
-						workspaces+=("$(__yarn_get_package_fields -p $basename -t string name)")
+						declare cwd=$PWD
+						until [[ -f "$cwd/package.json" ]]; do
+							cwd="${cwd%/*}"
+						done
+						workspaces+=("$(__yarn_get_package_fields -p "$cwd/$workspace_path" -t string name)")
 					done
 					COMPREPLY=($(compgen -W "${workspaces[*]}" -- "$cur"))
 					return 0

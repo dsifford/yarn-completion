@@ -399,7 +399,7 @@ _yarn_config() {
 			case "$cur" in
 				-*) ;;
 				*)
-					if [[ $prev == @(get|delete) ]]; then
+					if [[ $prev == "@(get|delete)" ]]; then
 						COMPREPLY=($(compgen -W "${known_keys[*]}" -- "$cur"))
 						return 0
 					fi

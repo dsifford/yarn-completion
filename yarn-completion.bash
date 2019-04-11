@@ -892,6 +892,7 @@ _yarn_version() {
 _yarn_workspace() {
 	((depth++))
 	declare -i args
+	declare workspaces_info
 
 	case "$cur" in
 		-*) ;;
@@ -899,12 +900,13 @@ _yarn_workspace() {
 			__yarn_count_args
 			case "$args" in
 				[0-2])
-					declare workspace_path
-					declare -a workspaces=()
-					for workspace_path in $(__yarn_get_package_fields -t array workspaces); do
-						workspaces+=("$(basename "$workspace_path")")
-					done
-					COMPREPLY=($(compgen -W "${workspaces[*]}" -- "$cur"))
+					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+					if [[ -n $workspaces_info ]]; then
+						mapfile -t < <(
+							sed -n 's/^ \{2\}"\([^"]*\)": {$/\1/p' <<< "$workspaces_info"
+						)
+						COMPREPLY=($(compgen -W "${MAPFILE[*]}" -- "$cur"))
+					fi
 					return 0
 					;;
 				3)
@@ -913,6 +915,16 @@ _yarn_workspace() {
 					;;
 				*)
 					declare cmd
+					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+
+					if [[ -n $workspaces_info ]]; then
+						PWD=$(
+							sed -n '/^ \{2\}"'"${COMP_WORDS[2]}"'": {$/,/^ \{2\}},\{0,1\}$/{
+								s/^ \{4\}"location": "\([^"]*\)",$/\1/p
+							}' <<< "$workspaces_info"
+						)
+					fi
+
 					__yarn_get_command -d 3
 					"_yarn_${cmd//-/_}" 2> /dev/null
 					return $?
@@ -982,8 +994,12 @@ _yarn_yarn() {
 }
 
 _yarn() {
-	declare prev_shopt
-	prev_shopt=$(shopt -p extglob)
+	# shellcheck disable=SC2064
+	trap "
+		PWD=$PWD
+		$(shopt -p extglob)
+		set +o pipefail
+	" RETURN
 
 	shopt -s extglob
 	set -o pipefail
@@ -1160,12 +1176,6 @@ _yarn() {
 	__yarn_get_command -d 1
 
 	__yarn_flag_args || "_yarn_${cmd//-/_}" 2> /dev/null || __yarn_fallback
-
-	# Resets back to users' settings
-	$prev_shopt
-	set +o pipefail
-
-	return 0
 }
 
 if [[ ${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 4 ]]; then

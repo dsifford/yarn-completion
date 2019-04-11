@@ -12,7 +12,7 @@ addons:
       - bash-completion
 
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --rc
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version "$(awk '/# Yarn Version:/{ print $4 }' ./yarn-completion.bash)"
   - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bash-completion@2 gnu-getopt; fi

@@ -1,5 +1,5 @@
 # shellcheck shell=bash disable=2207
-# vim: set fdm=syntax:
+# vim: set fdm=syntax fdl=0:
 #
 # Version: 0.13.0
 # Yarn Version: 1.15.2
@@ -284,6 +284,12 @@ __yarn_flag_args() {
 				--access)
 					COMPREPLY=($(compgen -W 'public restricted' -- "$cur"))
 					;;
+				--groups)
+					COMPREPLY=($(compgen -W 'dependencies devDependencies optionalDependencies' -- "$cur"))
+					;;
+				--level)
+					COMPREPLY=($(compgen -W 'info low moderate high critical' -- "$cur"))
+					;;
 				--network-timeout)
 					compopt -o nospace
 					COMPREPLY=($(compgen -W '{1000..10000..1000}' -- "$cur"))
@@ -310,6 +316,8 @@ _yarn_add() {
 _yarn_audit() {
 	((depth++))
 	flags=(
+		--groups
+		--level
 		--summary
 	)
 	return 1
@@ -1081,6 +1089,8 @@ _yarn() {
 	)
 	declare -ar special_arg_flags=(
 		--access
+		--groups
+		--level
 		--network-timeout
 	)
 	declare -ar optional_arg_flags=(

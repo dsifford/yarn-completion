@@ -46,7 +46,7 @@ $ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash
 
 > Will you support bash 3?
 
-**No**. Bash 3 is now 9 years outdated (at time of writing). There is no conceivable reason why anybody would or should still be using bash 3. Upgrade to bash 4.
+**No**. Bash 3 is now 9 years outdated (at time of writing). There is no conceivable reason why anybody would or should still be using bash 3. Upgrade to the latest version of bash.
 
 > Completion fails for run scripts that contains a colon.
 

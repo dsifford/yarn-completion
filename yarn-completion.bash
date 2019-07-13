@@ -1,8 +1,8 @@
 # shellcheck shell=bash disable=2207
 # vim: set fdm=syntax fdl=0:
 #
-# Version: 0.14.0
-# Yarn Version: 1.16.0
+# Version: 0.15.0
+# Yarn Version: 1.17.3
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -303,6 +303,7 @@ __yarn_flag_args() {
 _yarn_add() {
 	((depth++))
 	flags=(
+		--audit -A
 		--dev -D
 		--exact -E
 		--optional -O
@@ -711,6 +712,11 @@ _yarn_publish() {
 		--no-commit-hooks
 		--no-git-tag-version
 		--patch
+		--preid
+		--premajor
+		--preminor
+		--prepatch
+		--prerelease
 		--tag
 	)
 	return 1
@@ -840,6 +846,7 @@ _yarn_upgrade() {
 	((depth++))
 	declare cmd dependencies devDependencies
 	flags=(
+		--audit -A
 		--caret -C
 		--exact -E
 		--latest -L
@@ -893,6 +900,11 @@ _yarn_version() {
 		--no-commit-hooks
 		--no-git-tag-version
 		--patch
+		--preid
+		--premajor
+		--preminor
+		--prepatch
+		--prerelease
 	)
 	return 1
 }

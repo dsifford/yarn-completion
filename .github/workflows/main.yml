@@ -1,0 +1,25 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: install yarn
+        run: |
+          curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version "$(awk '/# Yarn Version:/{ print $4 }' ./yarn-completion.bash)"
+      - name: environment setup (linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo ln -sf "$HOME/.yarn/bin/yarn" /usr/bin/yarn
+          sudo apt-get update
+          sudo apt-get install -y bash-completion
+      - name: environment setup (macOS)
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install bash-completion@2 gnu-getopt
+      - name: test
+        run: PATH="/usr/local/opt/gnu-getopt/bin:$PATH" ./tests/test

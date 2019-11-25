@@ -68,16 +68,16 @@ Usually the completion files are installed under /etc/bash_completion.d when ins
 
 5. Add the reference to the yarn completion in the `~/.bash_completion` file
     ```bash
-# Yarn Completion 
-if [ -f ~/.config/yarn-completion/yarn ]; then 
-    source ~/.config/yarn-completion/yarn 
-fi 
+	# Yarn Completion 
+	if [ -f ~/.config/yarn-completion/yarn ]; then 
+		source ~/.config/yarn-completion/yarn 
+	fi 
     ```
 6. Restart the terminal or source the completion file to have it working without restart:
 
-```bash
-source ~/.bash_completion 
-```
+	```bash
+	source ~/.bash_completion 
+	```
 
 
 ## FAQ

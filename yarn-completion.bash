@@ -1025,8 +1025,6 @@ _yarn() {
 	shopt -s extglob
 	set -o pipefail
 
-	declare COMP_WORDBREAKS=$' \t\n"\'><=;|&(:'
-
 	declare cur cmd prev
 	declare -a words
 	declare -i cword counter=1 depth=1
@@ -1188,17 +1186,19 @@ _yarn() {
 	declare -a flags=()
 
 	COMPREPLY=()
-	if command -v _init_completion > /dev/null; then
+	if command -v _get_comp_words_by_ref > /dev/null; then
+		_get_comp_words_by_ref -n = -n @ -n : cur prev words cword
+	elif command -v _init_completion > /dev/null; then
 		_init_completion
-	else
-		if command -v _get_comp_words_by_ref > /dev/null; then
-			_get_comp_words_by_ref cur prev words cword
-		fi
 	fi
 
 	__yarn_get_command -d 1
 
 	__yarn_flag_args || "_yarn_${cmd//-/_}" 2> /dev/null || __yarn_fallback
+
+	if command -v __ltrim_colon_completions > /dev/null; then
+		__ltrim_colon_completions "$cur"
+	fi
 }
 
 if [[ ${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 4 ]]; then

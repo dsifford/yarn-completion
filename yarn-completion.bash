@@ -2,7 +2,7 @@
 # vim: set fdm=syntax fdl=0:
 #
 # Version: 0.17.0
-# Yarn Version: 1.22.4
+# Yarn Version: 1.22.11
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #

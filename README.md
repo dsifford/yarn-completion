@@ -13,7 +13,7 @@ curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-c
 ```
 
 ### Installation on macOS with Homebrew
-To use this script on macOS, we need to install [bash](https://www.gnu.org/software/bash/) and [bash-completion](https://github.com/scop/bash-completion) in addition to the above script .
+To use this script on macOS, we need to install [bash](https://www.gnu.org/software/bash/) and [bash-completion](https://github.com/scop/bash-completion) in addition to the above script.
 
 1.  `bash` version ^4.x.x is **required**.
 

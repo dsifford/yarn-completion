@@ -7,10 +7,13 @@
 To enable on-demand completion loading, download the completion file to the predefined bash-completion user directory.
 
 ```sh
-$ mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/" && curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
+mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/"
+curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/yarn" \
+	https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
 ```
 
 ### Installation on macOS with Homebrew
+To use this script on macOS, we need to install [bash](https://www.gnu.org/software/bash/) and [bash-completion](https://github.com/scop/bash-completion) in addition to the above script.
 
 1.  `bash` version ^4.x.x is **required**.
 
@@ -33,14 +36,7 @@ $ mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bas
     ## + copy one line to ~/.bash_profile as instructed by brew after bash-completion setup
     ```
 
-3.  Install `yarn-completion`:
-
-    ```sh
-    mkdir -p "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions"
-    curl -o "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
-    ```
-
-4.  Restart Terminal.
+3.  Restart Terminal.
 
 ## FAQ
 

@@ -38,6 +38,44 @@ To use this script on macOS, we need to install [bash](https://www.gnu.org/softw
 
 3.  Restart Terminal.
 
+### Installation on Debian based Linux [Ubuntu/Mint/others]
+
+Usually the completion files are installed under /etc/bash_completion.d when installing a package as *root*. However for user user completion a using the home folder would ensure portability in case of system reinstallation.
+
+1.  Ensure that `bash` version ^4.x.x is **installed**. It should be by the default on any recent distribution. Check with:
+
+    ```bash
+    bash --version
+    ```
+
+2. Create a directory in your home folder to host the yarn completion: 
+
+    ```bash
+    mkdir $HOME/.config/yarn-completion/
+    ```
+
+3. Copy the `yarn-completion` from the repo in the created directory
+    ```bash
+    curl -o "$HOME/.config/yarn-completion/yarn" https://raw.githubusercontent.com/dsifford/yarn-completion/master/yarn-completion.bash
+    ```
+
+4. Create a custom completions launcher file if not already present `~/.bash_completion`
+
+
+5. Add the reference to the yarn completion in the `~/.bash_completion` file
+    ```bash
+	# Yarn Completion 
+	if [ -f ~/.config/yarn-completion/yarn ]; then 
+		source ~/.config/yarn-completion/yarn 
+	fi 
+    ```
+6. Restart the terminal or source the completion file to have it working without restart:
+
+	```bash
+	source ~/.bash_completion 
+	```
+
+
 ## FAQ
 
 > Will you support bash 3?

@@ -921,12 +921,22 @@ _yarn_workspace() {
 			__yarn_count_args
 			case "$args" in
 				[0-2])
-					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
-					if [[ -n $workspaces_info ]]; then
-						mapfile -t < <(
-							sed -n 's/^ \{2\}"\([^"]*\)": {$/\1/p' <<< "$workspaces_info"
-						)
-						COMPREPLY=($(compgen -W "${MAPFILE[*]}" -- "$cur"))
+					if [ -f .yarnrc.yml ]; then
+						workspaces_info=$(yarn workspaces list --json 2> /dev/null)
+						if [[ -n $workspaces_info ]]; then	
+							mapfile -t < <(
+								sed -n 's/.*,"name"\:"\([^"]*\)"}/\1/p' <<< "$workspaces_info"
+							)
+							COMPREPLY=($(compgen -W "${MAPFILE[*]}" -- "$cur"))
+						fi
+					else
+						workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+						if [[ -n $workspaces_info ]]; then
+							mapfile -t < <(
+								sed -n 's/^ \{2\}"\([^"]*\)": {$/\1/p' <<< "$workspaces_info"
+							)
+							COMPREPLY=($(compgen -W "${MAPFILE[*]}" -- "$cur"))
+						fi
 					fi
 					return 0
 					;;
@@ -936,15 +946,24 @@ _yarn_workspace() {
 					;;
 				*)
 					declare cmd
-					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
-
-					if [[ -n $workspaces_info ]]; then
-						PWD=$(
-							sed -n '/^ \{2\}"'"${COMP_WORDS[2]}"'": {$/,/^ \{2\}},\{0,1\}$/{
-								s/^ \{4\}"location": "\([^"]*\)",$/\1/p
-							}' <<< "$workspaces_info"
-						)
+					if [ -f .yarnrc.yml ]; then
+						workspaces_info=$(yarn workspaces list --json 2> /dev/null)
+						if [[ -n $workspaces_info ]]; then
+							PWD=$(
+								(sed -n 's/.*,"name"\:"\([^"]*\)"}/\1/p' | grep -e "$foo") <<< "$workspaces_info"
+							)
+						fi
+					else
+						workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+						if [[ -n $workspaces_info ]]; then
+							PWD=$(
+								sed -n '/^ \{2\}"'"${COMP_WORDS[2]}"'": {$/,/^ \{2\}},\{0,1\}$/{
+									s/^ \{4\}"location": "\([^"]*\)",$/\1/p
+								}' <<< "$workspaces_info"
+							)
+						fi
 					fi
+
 
 					__yarn_get_command -d 3
 					"_yarn_${cmd//-/_}" 2> /dev/null

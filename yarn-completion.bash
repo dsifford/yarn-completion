@@ -1015,14 +1015,17 @@ _yarn_yarn() {
 }
 
 _yarn() {
-	# shellcheck disable=SC2064
-	trap "
-		PWD=$PWD
-		$(shopt -p extglob)
-		set +o pipefail
-	" RETURN
+	if [[ "$SHELL" != "/bin/zsh" && "$SHELL" != "/usr/bin/zsh" ]]; then
+		# shellcheck disable=SC2064
+		trap "
+			PWD=$PWD
+			$(shopt -p extglob)
+			set +o pipefail
+		" RETURN
 
-	shopt -s extglob
+		shopt -s extglob
+	fi
+
 	set -o pipefail
 
 	declare cur cmd prev
